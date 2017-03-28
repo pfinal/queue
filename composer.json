@@ -1,0 +1,26 @@
+{
+    "name": "pfinal/queue",
+    "description": "The PFinal queue package.",
+    "license": "MIT",
+    "homepage": "http://www.pfinal.cn",
+    "authors": [
+        {
+            "name": "Zou Yiliang"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "pfinal/container": ">=1.1",
+        "symfony/console": "2.*",
+        "jeremeamia/superclosure": "*",
+        "symfony/process":"2.*"
+    },
+    "require-dev": {
+        "pfinal/database": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PFinal\\Queue\\": "src/"
+        }
+    }
+}
