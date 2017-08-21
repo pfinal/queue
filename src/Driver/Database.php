@@ -21,6 +21,7 @@ class Database extends QueueDriver
     protected $tableFailed = '{{%job_failed}}';
 
     protected $dbConfig;
+
     /** @var Builder */
     protected $db;
     /**

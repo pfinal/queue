@@ -2,7 +2,7 @@
 
 namespace PFinal\Queue\Job;
 
-use PFinal\Queue\Driver\DatabaseDriver;
+use PFinal\Queue\Driver\Database;
 use PFinal\Queue\Job;
 
 /**
@@ -15,7 +15,8 @@ class DatabaseJob extends Job
 {
     /** @var  array */
     protected $job;
-    /** @var  DatabaseDriver */
+
+    /** @var  Database */
     protected $driver;
 
     public function __construct($driver, $job, $queue)
