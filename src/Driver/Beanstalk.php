@@ -56,27 +56,6 @@ class Beanstalk extends QueueDriver
 
         return new BeanstalkJob($this->ph, $job, $queue);
     }
-
-//    //检查下一个任务
-//    public function peekReady($queue = null)
-//    {
-//        $queue = is_null($queue) ? $this->defaultTube : $queue;
-//
-//        $ph = new Pheanstalk($this->host);
-//        //var_dump($ph->statsTube($tube));
-//
-//        try {
-//            $job = $ph->peekReady($queue);
-//            //list($class, $data) = unserialize($job->getData());
-//            return unserialize($job->getData());
-//
-//        } catch (Exception $ex) {
-//
-//        }
-//        return false;
-//
-//    }
-
 }
 
 

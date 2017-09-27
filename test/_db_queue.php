@@ -1,7 +1,7 @@
 <?php
 
 $dbConfig = array(
-    'dsn' => 'mysql:host=127.0.0.1;dbname=kushu_dev',
+    'dsn' => 'mysql:host=127.0.0.1;dbname=test',
     'username' => 'root',
     'password' => 'root',
     'charset' => 'utf8',

@@ -1,6 +1,7 @@
 <?php
 
 namespace PFinal\Queue\Job;
+
 use PFinal\Queue\Job;
 
 /**
@@ -11,6 +12,19 @@ use PFinal\Queue\Job;
  */
 class SyncJob extends Job
 {
+    protected $queue;
+
+    protected $job;
+
+    protected $driver;
+
+    public function __construct($driver, $job, $queue)
+    {
+        $this->queue = $queue;
+        $this->driver = $driver;
+        $this->job = $job;
+    }
+
     /**
      * 工作执行次数
      * @return int

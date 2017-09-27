@@ -12,26 +12,26 @@ abstract class Job
 {
     protected $deleted = false;
 
-    protected $queue;
-
-    protected $job;
-
-    protected $driver;
-
-    public function __construct($driver, $job, $queue)
+    /**
+     * 标记为已删除
+     */
+    public function delete()
     {
-        $this->queue = $queue;
-        $this->driver = $driver;
-        $this->job = $job;
+        $this->deleted = true;
     }
 
+    /**
+     * 是否被删除
+     *
+     * @return bool
+     */
     public function isDeleted()
     {
         return $this->deleted;
     }
 
     /**
-     * Get the name of the queued job class.
+     * job的类名
      *
      * @return string
      */
@@ -41,7 +41,7 @@ abstract class Job
     }
 
     /**
-     * Get the name of the queue the job belongs to.
+     * 队列
      *
      * @return string
      */
@@ -50,17 +50,12 @@ abstract class Job
         return $this->queue;
     }
 
+    /**
+     * 失败后处理
+     */
     public function failed()
     {
-        //Log::error(sprintf('Job #%s %s failed. RawBody:%s', $this->getJobId(), $this->getName(), $this->getRawBody()));
-    }
 
-    /**
-     * 服务端完全删除一个 job
-     */
-    public function delete()
-    {
-        $this->deleted = true;
     }
 
     /**
@@ -71,29 +66,37 @@ abstract class Job
      */
     public function release($delay = 0)
     {
+
     }
 
     /**
      * 当前job是第几次尝试执行
+     *
      * @return int
      */
     public function attempts()
     {
+
     }
 
     /**
-     * 工作ID
+     * Job ID
+     *
      * @return mixed
      */
     public function getJobId()
     {
+
     }
 
     /**
+     * Raw Body
+     *
      * @return string
      */
     public function getRawBody()
     {
+
     }
 
     /**

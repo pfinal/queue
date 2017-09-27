@@ -2,31 +2,26 @@
 
 namespace PFinal\Queue\Job;
 
-use PFinal\Queue\Driver\Database;
+use PFinal\Queue\Driver\Redis;
 use PFinal\Queue\Job;
 
-/**
- * 数据库队列job对象
- *
- * @author  Zou Yiliang
- * @since   1.0
- */
-class DatabaseJob extends Job
+class RedisJob extends Job
 {
     protected $queue;
 
-    /** @var  array */
     protected $job;
 
-    /** @var  Database */
+    /** @var  Redis */
     protected $driver;
 
-    public function __construct($driver, $job, $queue)
+    protected $reserved;
+
+    public function __construct($driver, $job, $queue, $reserved)
     {
         $this->queue = $queue;
         $this->driver = $driver;
         $this->job = $job;
-        $this->job['attempts'] = $this->job['attempts'] + 1;
+        $this->reserved = $reserved;
     }
 
     /**
@@ -35,7 +30,7 @@ class DatabaseJob extends Job
     public function delete()
     {
         parent::delete();
-        $this->driver->delete($this->job);
+        $this->driver->delete($this->queue, $this);
     }
 
     /**
@@ -45,7 +40,7 @@ class DatabaseJob extends Job
      */
     public function getRawBody()
     {
-        return $this->job['payload'];
+        return serialize(array($this->job['job'], $this->job['data']));
     }
 
     /**
@@ -53,7 +48,7 @@ class DatabaseJob extends Job
      */
     public function release($delay = 10)
     {
-        $this->driver->release($this->job, $delay);
+        $this->driver->release($this->queue, $this, $delay);
     }
 
     public function attempts()
@@ -69,6 +64,16 @@ class DatabaseJob extends Job
     public function failed()
     {
         parent::failed();
-        $this->driver->log($this->job['queue'], $this->job['payload']);
+        $this->driver->fail($this->queue, $this->getRawBody());
+    }
+
+    /**
+     * Get the underlying reserved Redis job.
+     *
+     * @return string
+     */
+    public function getReservedJob()
+    {
+        return $this->reserved;
     }
 }

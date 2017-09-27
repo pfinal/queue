@@ -17,6 +17,7 @@ class Database extends QueueDriver
 {
     //数据库表名
     protected $table = '{{%job}}';
+
     //存放失败的job
     protected $tableFailed = '{{%job_failed}}';
 
@@ -24,12 +25,17 @@ class Database extends QueueDriver
 
     /** @var Builder */
     protected $db;
+
     /**
      * 超时被终止的job，再次被拉起的间隔(秒)
      *
+     * 参数项 --timeout 的值应该是中小于配置项 retryAfter 的值,这是为了确保队列进程总在任务重试以前关闭
+     * 如果 --timeout 比 retryAfter 大，则你的任务可能被执行两次
+     *
      * @var int|null
      */
-    protected $expire = 60;
+    protected $retryAfter = 60;
+
 
     public function __construct(array $config = array())
     {
@@ -50,7 +56,7 @@ class Database extends QueueDriver
     {
         $queue = is_null($queue) ? $this->defaultTube : $queue;
 
-        if (!is_null($this->expire)) {
+        if (!is_null($this->retryAfter)) {
             $this->releaseJobsThatHaveBeenReservedTooLong($queue);
         }
 
@@ -146,7 +152,7 @@ class Database extends QueueDriver
      */
     protected function releaseJobsThatHaveBeenReservedTooLong($queue)
     {
-        $expired = date('Y-m-d H:i:s', time() - $this->expire);
+        $expired = date('Y-m-d H:i:s', time() - $this->retryAfter);
 
         $sql = "UPDATE {$this->table} SET reserved=0, reserved_at=?, attempts=attempts+1 "
             . "WHERE queue=? AND reserved=1 AND reserved_at<=?";

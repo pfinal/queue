@@ -14,7 +14,6 @@ class WorkCommand extends Command
     protected $name = 'queue:work';
     protected $description = 'Process the next job on a queue';
 
-
     /** @var Container */
     protected $app;
 

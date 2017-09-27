@@ -13,16 +13,22 @@ use PFinal\Queue\Job;
  */
 class BeanstalkJob extends Job
 {
+    protected $job;
+
+    protected $driver;
+
     /** @var  \Pheanstalk\Job */
     private $_job;
+
     /** @var  Pheanstalk */
     private $_ph;
+
     protected $queue;
 
-    public function __construct($ph, $job, $queue)
+    public function __construct($driver, $job, $queue)
     {
+        $this->_ph = $driver;
         $this->_job = $job;
-        $this->_ph = $ph;
         $this->queue = $queue;
     }
 

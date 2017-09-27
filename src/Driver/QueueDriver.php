@@ -15,7 +15,7 @@ class QueueDriver
 
     /**
      * 推送一个新任务到队列中
-     * @param string $class 处理任务的类和方法，例如'SendEmail@send'，如果不指定方法，默认调用fire方法。也可以是一个匿名函数。
+     * @param string $class 处理任务的类和方法，例如'Jobs\Email@send'，如果不指定方法，默认调用fire方法。也可以是一个匿名函数。
      *
      * fire方法接受一个 Job 实例对像 和一个$data。$data是调用Queue::push方法传递的第二个参数值
      *      pulic function fire($job, $data){
@@ -57,6 +57,17 @@ class QueueDriver
     }
 
     /**
+     * 获取队列大小
+     *
+     * @param  string $queue
+     * @return int
+     */
+    public function size($queue = null)
+    {
+        return 0;
+    }
+
+    /**
      * 将Queue::push的内容，序列化为字符串，如果是匿名函数，则包装为PFinal\Queue\QueueClosure对象
      * @param $class
      * @param null $data
@@ -72,8 +83,4 @@ class QueueDriver
         return serialize(array($class, $data));
     }
 
-
 }
-
-
-

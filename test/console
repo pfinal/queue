@@ -1,26 +1,26 @@
 #!/usr/bin/env php
 <?php
 
-set_time_limit(0);
-
-date_default_timezone_set('PRC');
-
-define('COMMAND_PATH', __DIR__);
-
-$loader = require_once __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/Send.php';
-
-use PFinal\Queue\ListenCommand;
-use PFinal\Queue\WorkCommand;
-use Symfony\Component\Console\Application as ConsoleApplication;
-
-$app = new \PFinal\Container\Container();
-
-$app['queue'] = require '_db_queue.php';
-
-$console = new ConsoleApplication();
-
-$console->add(new ListenCommand());
-$console->add(new WorkCommand($app));
-
-$console->run();
+//set_time_limit(0);
+//
+//date_default_timezone_set('PRC');
+//
+//define('COMMAND_PATH', __DIR__);
+//
+//$loader = require_once __DIR__ . '/../vendor/autoload.php';
+//require __DIR__ . '/Send.php';
+//
+//use PFinal\Queue\ListenCommand;
+//use PFinal\Queue\WorkCommand;
+//use Symfony\Component\Console\Application as ConsoleApplication;
+//
+//$app = new \PFinal\Container\Container();
+//
+//$app['queue'] = require '_db_queue.php';
+//
+//$console = new ConsoleApplication();
+//
+//$console->add(new ListenCommand());
+//$console->add(new WorkCommand($app));
+//
+//$console->run();
