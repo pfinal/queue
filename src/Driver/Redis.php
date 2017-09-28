@@ -102,9 +102,8 @@ class Redis extends QueueDriver
     {
         $payload = static::createPayload($class, $data);
 
-        $this->getConnection()->eval(
-            LuaScripts::release(), 2, $queue . ':delayed', $queue . ':reserved',
-            $payload, $this->availableAt($delay)
+        $this->getConnection()->zadd(
+            $this->getQueue($queue) . ':delayed', $this->availableAt($delay), json_encode($payload)
         );
 
         return $payload['id'];

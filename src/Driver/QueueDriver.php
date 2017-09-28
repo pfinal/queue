@@ -40,7 +40,7 @@ class QueueDriver
      * @param mixed $data 需要传递给处理器的数据 如果第一个参数为匿名函数，此参数无效
      * @return mixed 返回jobId
      */
-    public function push($class, $data = null, $queue = null)
+    public function push($class, $data = null, $queue = null, $delay = 0)
     {
     }
 

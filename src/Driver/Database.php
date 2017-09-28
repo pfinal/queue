@@ -3,6 +3,7 @@
 namespace PFinal\Queue\Driver;
 
 use PFinal\Database\Builder;
+use PFinal\Queue\Job;
 use PFinal\Queue\Job\DatabaseJob;
 
 /**
@@ -23,7 +24,7 @@ class Database extends QueueDriver
 
     protected $dbConfig;
 
-    /** @var Builder */
+    /** @var \PFinal\Database\Builder */
     protected $db;
 
     /**
@@ -64,7 +65,7 @@ class Database extends QueueDriver
 
     public function delete($job)
     {
-        $this->db->table($this->table)->where('id=?', [$job['id']])->delete();
+        $this->db->table($this->table)->where('id = ?', array($job['id']))->delete();
     }
 
     /**
@@ -108,22 +109,27 @@ class Database extends QueueDriver
     {
         $expired = date('Y-m-d H:i:s', time() + $delay);
 
-        $sql = "UPDATE {$this->table} SET reserved=0, reserved_at=?,available_at=?, attempts=attempts+1 WHERE id=?";
-        $this->db->getConnection()->execute($sql, [date('Y-m-d H:i:s'), $expired, $job['id']]);
+        $this->db->table($this->table)->where('id = ?', $job['id'])
+            ->increment('attempts', 1, array(
+                'reserved' => 0,
+                'reserved_at' => date('Y-m-d H:i:s'),
+                'available_at' => $expired,
+            ));
     }
 
     /**
      * 获取下一个有效job
-     * @return array|null
+     *
+     * @return Job|null
      */
     protected function getNextAvailableJob($queue)
     {
         $this->db->getConnection()->beginTransaction();
 
         $job = $this->db->table($this->table)->lockForUpdate()
-            ->where('queue=?', [$queue])
-            ->where('reserved=0')
-            ->where('available_at<=?', [date('Y-m-d H:i:s')])
+            ->where('queue = ?', [$queue])
+            ->where('reserved = 0')
+            ->where('available_at <= ?', [date('Y-m-d H:i:s')])
             ->orderBy('id asc')
             ->findOne();
 
@@ -131,7 +137,7 @@ class Database extends QueueDriver
             if ($this->db->table($this->table)->update([
                 'reserved' => 1,
                 'reserved_at' => date('Y-m-d H:i:s'),
-            ], 'id=?', [$job['id']])
+            ], 'id = ?', array($job['id']))
             ) {
                 $this->db->getConnection()->commit();
                 return new DatabaseJob($this, $job, $queue);
@@ -153,9 +159,13 @@ class Database extends QueueDriver
     {
         $expired = date('Y-m-d H:i:s', time() - $this->retryAfter);
 
-        $sql = "UPDATE {$this->table} SET reserved=0, reserved_at=?, attempts=attempts+1 "
-            . "WHERE queue=? AND reserved=1 AND reserved_at<=?";
-        $this->db->getConnection()->execute($sql, [date('Y-m-d H:i:s'), $queue, $expired]);
+        $this->db->table($this->table)
+            ->where('queue = ? AND reserved = 1 AND reserved_at <= ?', array($queue, $expired))
+            ->increment('attempts', 1, array(
+                'reserved' => 0,
+                'reserved_at' => date('Y-m-d H:i:s'),
+            ));
+
     }
 }
 

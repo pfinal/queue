@@ -47,7 +47,7 @@ CREATE TABLE `pre_job` (
 
 DROP TABLE IF EXISTS pre_job_failed;
 CREATE TABLE `pre_job_failed` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `queue` text,
   `payload` text,
   `failed_at` DATETIME NOT NULL,
