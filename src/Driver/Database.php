@@ -46,11 +46,10 @@ class Database extends QueueDriver
         $this->db = new Builder($this->dbConfig);
     }
 
-    public function push($class, $data = null, $queue = null)
+    public function push($class, $data = null, $queue = null, $delay = 0)
     {
-        return $this->pushToDatabase(parent::serialize($class, $data), 0, 0, $queue);
+        return $this->pushToDatabase(parent::serialize($class, $data), $delay, 0, $queue);
     }
-
 
     public function pop($queue = null)
     {

@@ -81,15 +81,31 @@ class Redis extends QueueDriver
         return 'queues:' . (empty($queue) ? $this->defaultTube : $queue);
     }
 
-    public function push($class, $data = null, $queue = null)
+    public function push($class, $data = null, $queue = null, $delay = 0)
     {
         if (!is_string($class)) {
             throw new \Exception('目前只支持字符串');
         }
 
+        if ($delay !== 0) {
+            return $this->later($delay, $class, $data, $queue);
+        }
+
         $payload = static::createPayload($class, $data);
 
         $this->getConnection()->rpush($this->getQueue($queue), json_encode($payload));
+
+        return $payload['id'];
+    }
+
+    protected function later($delay, $class, $data = null, $queue = null)
+    {
+        $payload = static::createPayload($class, $data);
+
+        $this->getConnection()->eval(
+            LuaScripts::release(), 2, $queue . ':delayed', $queue . ':reserved',
+            $payload, $this->availableAt($delay)
+        );
 
         return $payload['id'];
     }

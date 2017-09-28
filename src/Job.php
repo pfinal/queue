@@ -13,7 +13,7 @@ abstract class Job
     protected $deleted = false;
 
     /**
-     * 标记为已删除
+     * 标记删除
      */
     public function delete()
     {
