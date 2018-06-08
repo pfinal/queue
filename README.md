@@ -28,6 +28,7 @@ $queue->push(function (Job $job) use ($email, $text) {
 ```
 php console queue:listen
 php console queue:listen --queue=default
+console queue:listen --memory=1024 --timeout=3600
 ```
 
 database驱动需要的表:

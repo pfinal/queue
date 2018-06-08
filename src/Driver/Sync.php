@@ -14,7 +14,7 @@ class Sync extends QueueDriver
 {
     private $payload;
 
-    public function push($class, $data = null, $queue = null)
+    public function push($class, $data = null, $queue = null, $delay = 0)
     {
         $this->payload = parent::serialize($class, $data);
 
