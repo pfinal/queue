@@ -37,7 +37,10 @@ class Database extends QueueDriver
      */
     protected $retryAfter = 60;
 
-
+    /**
+     * Database constructor.
+     * @param array $config
+     */
     public function __construct(array $config = array())
     {
         foreach ($config as $k => $v) {
@@ -47,11 +50,24 @@ class Database extends QueueDriver
         $this->db = new Builder($this->dbConfig);
     }
 
+    /**
+     * @param string $class
+     * @param null $data
+     * @param null $queue
+     * @param int $delay
+     * @return int|mixed
+     * @throws \PFinal\Database\Exception
+     */
     public function push($class, $data = null, $queue = null, $delay = 0)
     {
         return $this->pushToDatabase(parent::serialize($class, $data), $delay, 0, $queue);
     }
 
+    /**
+     * @param null $queue
+     * @return null|Job
+     * @throws \PFinal\Database\Exception
+     */
     public function pop($queue = null)
     {
         $queue = is_null($queue) ? $this->defaultTube : $queue;
@@ -63,9 +79,15 @@ class Database extends QueueDriver
         return $this->getNextAvailableJob($queue);
     }
 
+    /**
+     * @param $job
+     * @throws \PFinal\Database\Exception
+     */
     public function delete($job)
     {
-        $this->db->table($this->table)->where('id = ?', array($job['id']))->delete();
+        $this->db->table($this->table)
+            ->where('id = ?', array($job['id']))
+            ->delete();
     }
 
     /**
@@ -73,12 +95,14 @@ class Database extends QueueDriver
      *
      * @param  string $queue
      * @param  string $payload
-     * @return void
+     * @throws \PFinal\Database\Exception
      */
     public function log($queue, $payload)
     {
         $failed_at = date('Y-m-d H:i:s');
-        $this->db->table($this->tableFailed)->insert(compact('queue', 'payload', 'failed_at'));
+
+        $this->db->table($this->tableFailed)
+            ->insert(compact('queue', 'payload', 'failed_at'));
     }
 
     /**
@@ -87,6 +111,7 @@ class Database extends QueueDriver
      * @param string $payload
      * @param int $attempts
      * @return int
+     * @throws \PFinal\Database\Exception
      */
     public function pushToDatabase($payload, $delay = 0, $attempts = 0, $queue = null)
     {
@@ -105,11 +130,17 @@ class Database extends QueueDriver
         ]);
     }
 
+    /**
+     * @param $job
+     * @param $delay
+     * @throws \PFinal\Database\Exception
+     */
     public function release($job, $delay)
     {
         $expired = date('Y-m-d H:i:s', time() + $delay);
 
-        $this->db->table($this->table)->where('id = ?', $job['id'])
+        $this->db->table($this->table)
+            ->where('id = ?', $job['id'])
             ->increment('attempts', 1, array(
                 'reserved' => 0,
                 'reserved_at' => date('Y-m-d H:i:s'),
@@ -121,6 +152,7 @@ class Database extends QueueDriver
      * 获取下一个有效job
      *
      * @return Job|null
+     * @throws \PFinal\Database\Exception
      */
     protected function getNextAvailableJob($queue)
     {
@@ -131,14 +163,19 @@ class Database extends QueueDriver
             ->where('reserved = 0')
             ->where('available_at <= ?', [date('Y-m-d H:i:s')])
             ->orderBy('id asc')
+            ->lockForUpdate()
             ->findOne();
 
         if ($job !== null) {
-            if ($this->db->table($this->table)->update([
-                'reserved' => 1,
-                'reserved_at' => date('Y-m-d H:i:s'),
-            ], 'id = ?', array($job['id']))
-            ) {
+
+            $res = $this->db->table($this->table)
+                ->where('id = ?', array($job['id']))
+                ->update(array(
+                    'reserved' => 1,
+                    'reserved_at' => date('Y-m-d H:i:s'),
+                ));
+
+            if ($res) {
                 $this->db->getConnection()->commit();
                 return new DatabaseJob($this, $job, $queue);
             }
@@ -154,6 +191,7 @@ class Database extends QueueDriver
      *
      * @param  string $queue
      * @return void
+     * @throws \PFinal\Database\Exception
      */
     protected function releaseJobsThatHaveBeenReservedTooLong($queue)
     {
@@ -165,7 +203,6 @@ class Database extends QueueDriver
                 'reserved' => 0,
                 'reserved_at' => date('Y-m-d H:i:s'),
             ));
-
     }
 }
 
