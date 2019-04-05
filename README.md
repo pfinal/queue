@@ -17,7 +17,11 @@ $queue->push(function (Job $job) use ($email, $text) {
     if( Mail::send($email, $text) ){
         $job->delete();
     }else{
-        $job->release(5);
+        if ($this->attempts() > 3) {
+            // ...
+        }else{
+            $job->release(5);
+        }
     }
 });
 
