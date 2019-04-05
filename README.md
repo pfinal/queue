@@ -16,20 +16,23 @@ composer require pfinal/queue
 $queue->push(function (Job $job) use ($email, $text) {
     if( Mail::send($email, $text) ){
     
-        // 执行成功后删除job
+        //任务执行成功后删除job
         $job->delete();
         
     }else{
         
         if ($this->attempts() > 10) {
         
-             // 重试次数太多，job失败
-            $job->failed();
+            //todo 处理任务失败业务逻辑
+            //...
+             
+            //删除job
+            $job->delete();
             
         }else{
         
-            // 延时重试
-            $delay = $this->attempts() * 3;
+            //延时重试
+            $delay = $this->attempts() * 5;
             $job->release($delay);
         }
     }
