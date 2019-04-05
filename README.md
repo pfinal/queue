@@ -33,6 +33,7 @@ $queue->push(function (Job $job) use ($email, $text) {
             //延时重试
             $delay = $this->attempts() * 5;
             $job->release($delay);
+            
         }
     }
 });

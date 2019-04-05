@@ -119,5 +119,4 @@ class WorkCommand extends Command
 
         return ['job' => $job, 'failed' => true];
     }
-
 }
