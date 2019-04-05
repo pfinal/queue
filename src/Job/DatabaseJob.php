@@ -66,9 +66,8 @@ class DatabaseJob extends Job
         return $this->job['id'];
     }
 
-    public function failed()
+    protected function failed()
     {
-        parent::failed();
         $this->driver->log($this->job['queue'], $this->job['payload']);
     }
 }

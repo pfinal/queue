@@ -26,8 +26,7 @@ $queue->push(function (Job $job) use ($email, $text) {
             //todo 处理任务失败业务逻辑
             //...
              
-            //删除job
-            $job->delete();
+            $job->fail();
             
         }else{
         

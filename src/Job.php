@@ -50,10 +50,19 @@ abstract class Job
         return $this->queue;
     }
 
+    public function fail()
+    {
+        if ($this->isDeleted()) {
+            return;
+        }
+        $this->delete();
+        $this->failed();
+    }
+
     /**
      * 失败后处理
      */
-    public function failed()
+    protected function failed()
     {
 
     }

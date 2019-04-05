@@ -115,9 +115,7 @@ class WorkCommand extends Command
     {
         $this->output->writeln(sprintf('%s Failed: #%s %s', date('Y-m-d H:i:s'), $job->getJobId(), $job->getName()));
 
-        $job->delete();
-
-        $job->failed();
+        $job->fail();
 
         return ['job' => $job, 'failed' => true];
     }

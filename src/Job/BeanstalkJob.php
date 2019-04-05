@@ -73,7 +73,7 @@ class BeanstalkJob extends Job
         return $this->_job->getId();
     }
 
-    public function failed()
+    protected function failed()
     {
         parent::failed();
     }

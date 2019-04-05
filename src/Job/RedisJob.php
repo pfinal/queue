@@ -61,9 +61,8 @@ class RedisJob extends Job
         return $this->job['id'];
     }
 
-    public function failed()
+    protected function failed()
     {
-        parent::failed();
         $this->driver->fail($this->queue, $this->getRawBody());
     }
 
