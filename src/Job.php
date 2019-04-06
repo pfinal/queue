@@ -11,6 +11,7 @@ namespace PFinal\Queue;
 abstract class Job
 {
     protected $deleted = false;
+    protected $released = false;
 
     /**
      * 标记删除
@@ -28,6 +29,15 @@ abstract class Job
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * 是否已放回队列
+     * @return bool
+     */
+    public function isRelease()
+    {
+        return $this->released;
     }
 
     /**
@@ -50,19 +60,23 @@ abstract class Job
         return $this->queue;
     }
 
-    public function fail()
+    /**
+     * @param  \Throwable|null $e
+     */
+    public function fail($e = null)
     {
         if ($this->isDeleted()) {
             return;
         }
         $this->delete();
-        $this->failed();
+        $this->failed($e);
     }
 
     /**
      * 失败后处理
+     * @param  \Throwable|null $e
      */
-    protected function failed()
+    protected function failed($e = null)
     {
 
     }
@@ -75,7 +89,7 @@ abstract class Job
      */
     public function release($delay = 0)
     {
-
+        $this->released = true;
     }
 
     /**

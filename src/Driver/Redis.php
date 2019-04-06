@@ -34,7 +34,7 @@ class Redis extends QueueDriver
      *
      * @var int|null
      */
-    protected $retryAfter = 60;
+    protected $retryAfter = 90;
 
     public function __construct(array $config = array())
     {

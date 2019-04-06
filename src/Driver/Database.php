@@ -35,7 +35,7 @@ class Database extends QueueDriver
      *
      * @var int|null
      */
-    protected $retryAfter = 60;
+    protected $retryAfter = 90;
 
     /**
      * Database constructor.
@@ -95,14 +95,21 @@ class Database extends QueueDriver
      *
      * @param  string $queue
      * @param  string $payload
+     * @param  \Throwable|null $e
      * @throws \PFinal\Database\Exception
      */
-    public function log($queue, $payload)
+    public function log($queue, $payload, $e = null)
     {
         $failed_at = date('Y-m-d H:i:s');
 
+        if ($e instanceof \Throwable) {
+            $exception = $e->getMessage() . "\n" . $e->getTraceAsString();
+        } else {
+            $exception = (string)$e;
+        }
+
         $this->db->table($this->tableFailed)
-            ->insert(compact('queue', 'payload', 'failed_at'));
+            ->insert(compact('queue', 'payload', 'failed_at', 'exception'));
     }
 
     /**
@@ -131,21 +138,28 @@ class Database extends QueueDriver
     }
 
     /**
-     * @param $job
+     * @param Job $job
      * @param $delay
+     * @return int|void
      * @throws \PFinal\Database\Exception
      */
     public function release($job, $delay)
     {
-        $expired = date('Y-m-d H:i:s', time() + $delay);
+        //删除重建，相当于移到最后
 
         $this->db->table($this->table)
             ->where('id = ?', $job['id'])
-            ->increment('attempts', 1, array(
-                'reserved' => 0,
-                'reserved_at' => date('Y-m-d H:i:s'),
-                'available_at' => $expired,
-            ));
+            ->delete();
+
+        $expired = date('Y-m-d H:i:s', time() + $delay);
+
+        $job['reserved'] = 0;
+        $job['reserved_at'] = date('Y-m-d H:i:s');
+        $job['available_at'] = $expired;
+
+        unset($job['id']);
+
+        return $this->db->table($this->table)->insertGetId($job);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-
+//
 //namespace PFinal\Queue\Test {
 //
 //    use PFinal\Queue\Job;
@@ -14,13 +14,12 @@
 //    $mail = 'a@b.c';
 //    $content = 'test';
 //
-//    $queue->push(function (\PFinal\Queue\Job $job) use ($mail, $content) {
-//        $job->delete();
-//    });
+////    $queue->push(function (\PFinal\Queue\Job $job) use ($mail, $content) {
+////        $job->delete();
+////    });
 //
 //
-//    $queue->push('PFinal\Queue\Test\Send@demo', ['email' => $mail, 'content' => $content]);
+//    $jobId = $queue->push('PFinal\Queue\Test\Send@demo', ['email' => $mail, 'content' => $content]);
 //
-//
-//
+//    echo $jobId;
 //}

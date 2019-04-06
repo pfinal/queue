@@ -54,6 +54,7 @@ class BeanstalkJob extends Job
      */
     public function release($delay = 0)
     {
+        parent::release($delay);
         $this->_ph->useTube($this->queue)->release($this->_job, Pheanstalk::DEFAULT_PRIORITY, $delay);
     }
 

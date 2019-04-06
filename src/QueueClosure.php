@@ -10,7 +10,6 @@ namespace PFinal\Queue;
  */
 class QueueClosure
 {
-
     /**
      * Fire the Closure based queue job.
      *

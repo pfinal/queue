@@ -53,6 +53,7 @@ class DatabaseJob extends Job
      */
     public function release($delay = 10)
     {
+        parent::release($delay);
         $this->driver->release($this->job, $delay);
     }
 
@@ -66,8 +67,8 @@ class DatabaseJob extends Job
         return $this->job['id'];
     }
 
-    protected function failed()
+    protected function failed($e=null)
     {
-        $this->driver->log($this->job['queue'], $this->job['payload']);
+        $this->driver->log($this->job['queue'], $this->job['payload'], $e);
     }
 }
