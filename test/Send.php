@@ -17,6 +17,9 @@
 //            //$job->release(3);
 //
 //            //throw new \Exception('error no 111');
+//
+//            //php test/console queue:work --timeout=2 --tries=3
+//            sleep(4);
 //        }
 //    }
 //}
