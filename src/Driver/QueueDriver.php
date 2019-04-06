@@ -18,7 +18,7 @@ class QueueDriver
      * @param string $class 处理任务的类和方法，例如'Jobs\Email@send'，如果不指定方法，默认调用fire方法。也可以是一个匿名函数。
      *
      * fire方法接受一个 Job 实例对像 和一个$data。$data是调用Queue::push方法传递的第二个参数值
-     *      pulic function fire($job, $data){
+     *      public function fire($job, $data){
      *          //处理这个job ...
      *          //当处理完成，从队列中将它删除
      *          $job->delete();

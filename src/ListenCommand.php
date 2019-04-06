@@ -26,7 +26,7 @@ class ListenCommand extends Command
                 new InputOption('memory', null, InputOption::VALUE_OPTIONAL, 'memory', 128),
 
                 //指定尝试上限 判断attempts 。 在工作被执行到一定的次数时，他将会添加至job_failed 数据表里。
-                new InputOption('tries', null, InputOption::VALUE_OPTIONAL, 'tries', 0),
+                new InputOption('tries', null, InputOption::VALUE_OPTIONAL, 'tries', 10),
 
                 //工作执行时发生错误，自动release, 设置工作再次能够执行的秒数。 Amount of time to delay failed jobs
                 new InputOption('delay', null, InputOption::VALUE_OPTIONAL, 'delay', 3),
