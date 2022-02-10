@@ -64,19 +64,24 @@ class WorkCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output = $output;
+        try {
+            $this->output = $output;
 
-        $queue = $input->getOption('queue');
-        $job = $this->app['queue']->pop($queue);
-        if (!is_null($job)) {
-            $maxTries = $input->getOption('tries');
-            $delay = $input->getOption('delay');
+            $queue = $input->getOption('queue');
+            $job = $this->app['queue']->pop($queue);
+            if (!is_null($job)) {
+                $maxTries = $input->getOption('tries');
+                $delay = $input->getOption('delay');
 
-            $this->process($job, $maxTries, $delay);
+                $this->process($job, $maxTries, $delay);
 
-        } else {
-            //没有任务时，让监听器在拉取新工作时要等待几秒
-            sleep($input->getOption('sleep'));
+            } else {
+                //没有任务时，让监听器在拉取新工作时要等待几秒
+                sleep($input->getOption('sleep'));
+            }
+        } catch (\Throwable $ex) {
+            $this->output->writeln($ex->getMessage() . ' ' . $ex->getFile() . '#' . $ex->getLine());
+            sleep($input->getOption('sleep')); // 防止不断报错时 cpu 100%
         }
     }
 
